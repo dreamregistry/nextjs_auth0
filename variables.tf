@@ -5,7 +5,7 @@ variable "callbacks" {
 
 variable "allowed_logout_urls" {
   type    = list(string)
-  default = ["http://localhost:3000/auth/logout"]
+  default = ["http://localhost:3000", "http://localhost:3000/auth/logout"]
 }
 
 
