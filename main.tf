@@ -23,6 +23,7 @@ resource "auth0_client" "client" {
   name                = random_pet.client_name.id
   description         = "Application configured for nextauth"
   app_type            = "regular_web"
+  is_first_party      = true
   callbacks           = var.callbacks
   allowed_logout_urls = var.allowed_logout_urls
   jwt_configuration {
