@@ -42,7 +42,7 @@ output "AUTH0_CLIENT_SECRET" {
 
 data "auth0_tenant" "current" {}
 
-output "AUTH0_ISSUER" {
+output "AUTH0_ISSUER_BASE_URL" {
   sensitive = true
   value     = "https://${data.auth0_tenant.current.domain}"
 }
