@@ -21,7 +21,7 @@ resource "random_pet" "client_name" {}
 
 resource "auth0_client" "client" {
   name                = random_pet.client_name.id
-  description         = "Application configured for nextauth"
+  description         = "Application configured for nextJS"
   app_type            = "regular_web"
   is_first_party      = true
   callbacks           = var.callbacks
