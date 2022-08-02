@@ -24,8 +24,8 @@ resource "auth0_client" "client" {
   description         = "Application configured for nextJS"
   app_type            = "regular_web"
   is_first_party      = true
-  callbacks           = var.callbacks
-  allowed_logout_urls = var.allowed_logout_urls
+  callbacks           = ["${var.app_base_url}/api/auth/callback"]
+  allowed_logout_urls = [var.app_base_url, "${var.app_base_url}/auth/logout"]
   jwt_configuration {
     alg = "RS256"
   }
