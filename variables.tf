@@ -1,3 +1,3 @@
-variable "app_base_url" {
+variable "app_host" {
   type    = string
 }
