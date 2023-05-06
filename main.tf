@@ -17,6 +17,9 @@ terraform {
 provider "random" {}
 provider "auth0" {}
 
+data "aws_region" "current" {}
+data "auth0_tenant" "current" {}
+
 resource "random_pet" "client_name" {}
 
 resource "auth0_client" "client" {
@@ -31,31 +34,51 @@ resource "auth0_client" "client" {
   }
 }
 
+resource "aws_ssm_parameter" "client_secret" {
+  name        = "/auth0_cli/${auth0_client.client.name}/client-secret"
+  description = "The auth0 client secret"
+  type        = "SecureString"
+  value       = auth0_client.client.client_secret
+}
+
+resource "aws_ssm_parameter" "auth0_secret" {
+  name        = "/auth0_cli/${auth0_client.client.name}/auth0-secret"
+  description = "The auth0 sdk session secret"
+  type        = "SecureString"
+  value       = random_uuid.secret.result
+}
+
+resource "random_uuid" "secret" {}
+
+
 output "AUTH0_CLIENT_ID" {
   sensitive = true
   value     = auth0_client.client.client_id
 }
 
 output "AUTH0_CLIENT_SECRET" {
-  sensitive = true
-  value     = auth0_client.client.client_secret
+  value = {
+    type   = "ssm"
+    arn    = aws_ssm_parameter.client_secret.arn
+    key    = aws_ssm_parameter.client_secret.name
+    region = data.aws_region.current.name
+  }
 }
 
-data "auth0_tenant" "current" {}
-
 output "AUTH0_ISSUER_BASE_URL" {
-  sensitive = true
-  value     = "https://${data.auth0_tenant.current.domain}"
+  value = "https://${data.auth0_tenant.current.domain}"
 }
 
 output "AUTH0_BASE_URL" {
-  sensitive = true
-  value     = var.app_host
+  value = var.app_host
 }
 
-resource "random_uuid" "secret" {}
 
 output "AUTH0_SECRET" {
-  sensitive = true
-  value     = random_uuid.secret.result
+  value = {
+    type   = "ssm"
+    arn    = aws_ssm_parameter.auth0_secret.arn
+    key    = aws_ssm_parameter.auth0_secret.name
+    region = data.aws_region.current.name
+  }
 }
